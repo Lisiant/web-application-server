@@ -6,3 +6,5 @@
 /.idea
 *.iml
 .DS_Store
+ec2-web-test.pem
+
