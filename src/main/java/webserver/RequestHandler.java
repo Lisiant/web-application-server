@@ -40,8 +40,9 @@ public class RequestHandler extends Thread {
             String requestHeader = sb.toString();
             String startLine = requestHeader.split("\n")[0];
             String requestURL = HttpRequestUtils.parseRequestUrl(HttpRequestUtils.parseRequestHeaderStartLine(startLine));
+            System.out.println(requestURL);
             File requestFile = getFile(getFullFilePath(requestURL));
-
+            if (requestFile.isDirectory()) return;
             byte[] body = Files.readAllBytes(requestFile.toPath());
 
             response200Header(dos, body.length);
