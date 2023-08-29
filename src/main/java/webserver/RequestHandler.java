@@ -38,6 +38,7 @@ public class RequestHandler extends Thread {
             }
 
             String requestHeader = sb.toString();
+            System.out.println(requestHeader);
             String startLine = requestHeader.split("\n")[0];
             String requestURL = HttpRequestUtils.parseRequestUrl(HttpRequestUtils.parseRequestHeaderStartLine(startLine));
             System.out.println(requestURL);
