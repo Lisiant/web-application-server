@@ -38,10 +38,8 @@ public class RequestHandler extends Thread {
             }
 
             String requestHeader = sb.toString();
-            System.out.println(requestHeader);
             String startLine = requestHeader.split("\n")[0];
             String requestURL = HttpRequestUtils.parseRequestUrl(HttpRequestUtils.parseRequestHeaderStartLine(startLine));
-            System.out.println(requestURL);
             File requestFile = getFile(getFullFilePath(requestURL));
             if (requestFile.isDirectory()) return;
             byte[] body = Files.readAllBytes(requestFile.toPath());
@@ -73,11 +71,11 @@ public class RequestHandler extends Thread {
         }
     }
 
-    private String getFullFilePath(String requestUrl){
+    private String getFullFilePath(String requestUrl) {
         return "./webapp" + requestUrl;
     }
 
-    private File getFile(String pathString){
+    private File getFile(String pathString) {
         Path path = Paths.get(pathString);
         return path.toFile();
     }
