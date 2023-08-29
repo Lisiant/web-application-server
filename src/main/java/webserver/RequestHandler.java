@@ -1,13 +1,15 @@
 package webserver;
 
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.Socket;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import util.HttpRequestUtils;
 
 public class RequestHandler extends Thread {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
@@ -25,7 +27,23 @@ public class RequestHandler extends Thread {
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
             DataOutputStream dos = new DataOutputStream(out);
-            byte[] body = "Hello".getBytes();
+            BufferedReader br = new BufferedReader(new InputStreamReader(in));
+            StringBuilder sb = new StringBuilder();
+            String line;
+
+            while ((line = br.readLine()) != null) {
+                if ("".equals(line)) break;
+                sb.append(line);
+                sb.append("\n");
+            }
+
+            String requestHeader = sb.toString();
+            String startLine = requestHeader.split("\n")[0];
+            String requestURL = HttpRequestUtils.parseRequestUrl(HttpRequestUtils.parseRequestHeaderStartLine(startLine));
+            File requestFile = getFile(getFullFilePath(requestURL));
+
+            byte[] body = Files.readAllBytes(requestFile.toPath());
+
             response200Header(dos, body.length);
             responseBody(dos, body);
         } catch (IOException e) {
@@ -51,5 +69,14 @@ public class RequestHandler extends Thread {
         } catch (IOException e) {
             log.error(e.getMessage());
         }
+    }
+
+    private String getFullFilePath(String requestUrl){
+        return "./webapp" + requestUrl;
+    }
+
+    private File getFile(String pathString){
+        Path path = Paths.get(pathString);
+        return path.toFile();
     }
 }

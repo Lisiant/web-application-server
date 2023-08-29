@@ -53,6 +53,15 @@ public class HttpRequestUtils {
         return getKeyValue(header, ": ");
     }
 
+    public static String[] parseRequestHeaderStartLine(String startLine){
+        return startLine.split(" ");
+    }
+
+    public static String parseRequestUrl(String[] tokens){
+        if (tokens.length != 3) throw new IllegalArgumentException();
+        return tokens[1];
+    }
+
     public static class Pair {
         String key;
         String value;
